@@ -81,7 +81,7 @@ jobs:
         uses: EmbarkStudios/cargo-deny-action@v2
 
   test-hosted:
-    name: Hosted Tests
+    name: Tests
     needs: pre_ci
     if: needs.pre_ci.outputs.continue
     runs-on: ubuntu-latest
