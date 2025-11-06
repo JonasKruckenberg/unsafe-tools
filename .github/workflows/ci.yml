@@ -27,10 +27,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.91.0 # MSRV
       - uses: Swatinem/rust-cache@v2
       - run: cargo check
         env:
@@ -44,10 +43,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.91.0 # MSRV
       - uses: Swatinem/rust-cache@v2
       - run: cargo fmt --check
         env:
@@ -61,10 +59,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.91.0 # MSRV
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy
         env:
@@ -88,10 +85,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: 1.91.0 # MSRV
       - uses: Swatinem/rust-cache@v2
       - run: cargo test
 
@@ -103,9 +99,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          components: miri
       - uses: Swatinem/rust-cache@v2
       - run: cargo +nightly miri test

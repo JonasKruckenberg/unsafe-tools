@@ -21,15 +21,16 @@ fn main() {
                     "
 /// A type with a size of `{size}` bytes and alignment `{align}`.
 #[repr(C, align({align}))]
+#[derive(Debug)]
 pub struct {ident}([::core::mem::MaybeUninit<{aligned_ty}>; {size_in_aligned_tys}]);
-impl {ident} {{
-    pub const unsafe fn new_uninit() -> Self {{
-        Self([::core::mem::MaybeUninit::uninit(); _])
-    }}
-    pub const unsafe fn new_zeroed() -> Self {{
-        Self([::core::mem::MaybeUninit::zeroed(); _])
-    }}
-}}
+// impl {ident} {{
+//     pub const unsafe fn new_uninit() -> Self {{
+//         Self([::core::mem::MaybeUninit::uninit(); _])
+//     }}
+//     pub const unsafe fn new_zeroed() -> Self {{
+//         Self([::core::mem::MaybeUninit::zeroed(); _])
+//     }}
+// }}
 
 unsafe impl crate::Mimic for crate::SizeAndAlign<{size},{align}> {{ type Archetype = {ident}; }}
 impl crate::private::Sealed for crate::SizeAndAlign<{size},{align}> {{}}
