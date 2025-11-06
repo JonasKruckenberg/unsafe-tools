@@ -1,17 +1,17 @@
 use std::hint::black_box;
-use unsafe_tools_mimic::{Size8Align8, Size40Align8, impl_mimic};
+use unsafe_tools_mimic::impl_mimic;
 
 #[test]
 fn basic() {
+    #[derive(Clone)]
     #[allow(unused)]
     pub struct Foo {
         a: u64,
     }
-    pub struct FooMimic(Size8Align8);
-    impl_mimic!(FooMimic for Foo);
+    impl_mimic!(Foo);
 
     let ty = Foo { a: 42 };
-    let mimic = FooMimic(unsafe { Size8Align8::new_uninit() });
+    let mimic = ty.clone().into_mimic();
 
     assert_eq!(size_of_val(&ty), size_of_val(&mimic));
     assert_eq!(align_of_val(&ty), align_of_val(&mimic));
@@ -23,13 +23,12 @@ fn conversion() {
     pub struct Foo {
         a: u64,
     }
-    pub struct FooMimic(Size8Align8);
-    impl_mimic!(FooMimic for Foo);
+    impl_mimic!(Foo);
 
     let a = Foo { a: 42 };
     let b = Foo { a: 42 };
 
-    let b = unsafe { black_box(FooMimic::from_ty(b)).into_ty() };
+    let b = unsafe { Foo::from_mimic(black_box(b.into_mimic())) };
 
     assert_eq!(a, b);
     assert_eq!(a, b);
@@ -41,8 +40,8 @@ fn with_lifetime() {
     pub struct Foo<'a> {
         a: &'a u64,
     }
-    pub struct FooMimic(Size8Align8);
-    impl_mimic!(FooMimic for Foo<'static>);
+
+    impl_mimic!(Foo<'static>);
 
     static A_VAL: u64 = 42;
     static B_VAL: u64 = 42;
@@ -50,9 +49,8 @@ fn with_lifetime() {
     let a = Foo { a: &A_VAL };
     let b = Foo { a: &B_VAL };
 
-    let b = unsafe { black_box(FooMimic::from_ty(b)).into_ty() };
+    let b = unsafe { Foo::from_mimic(black_box(b.into_mimic())) };
 
-    assert_eq!(a, b);
     assert_eq!(a, b);
 }
 
@@ -64,8 +62,7 @@ fn with_generics() {
         b: T,
         c: U,
     }
-    pub struct FooMimic(Size40Align8);
-    impl_mimic!(FooMimic for Foo<u8, String>);
+    impl_mimic!(Foo<u8, String>);
 
     let a = Foo {
         a: 42,
@@ -78,8 +75,7 @@ fn with_generics() {
         c: "hello_world".to_string(),
     };
 
-    let b = unsafe { black_box(FooMimic::from_ty(b)).into_ty() };
+    let b = unsafe { Foo::from_mimic(black_box(b.into_mimic())) };
 
-    assert_eq!(a, b);
     assert_eq!(a, b);
 }
