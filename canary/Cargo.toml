@@ -1,5 +1,6 @@
 [package]
 name = "unsafe-tools-canary"
+description = "Runtime initialization checking for Rust types"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

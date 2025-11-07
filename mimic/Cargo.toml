@@ -1,5 +1,6 @@
 [package]
 name = "unsafe-tools-mimic"
+description = "Size and alignment matched opaque types"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
