@@ -18,5 +18,5 @@ license.workspace = true
 publish = true
 
 [dependencies]
-unsafe-tools-canary = { path = "canary" }
-unsafe-tools-mimic = { path = "mimic" }
+unsafe-tools-canary = { path = "canary", version = "0.1.0" }
+unsafe-tools-mimic = { path = "mimic", version = "0.1.0" }
