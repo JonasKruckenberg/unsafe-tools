@@ -1,28 +1,33 @@
 #![no_std]
 
-use core::ops::{Deref, DerefMut};
+use core::{
+    any::TypeId,
+    ops::{Deref, DerefMut},
+};
 
 #[repr(C)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Canary<T, const CANARY: u64> {
-    _canary: u64,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Canary<T> {
+    type_id: TypeId,
     inner: T,
 }
 
-impl<T, const CANARY: u64> Canary<T, CANARY> {
+impl<T> Canary<T>
+where
+    T: 'static,
+{
     pub const fn new(inner: T) -> Self {
         Self {
-            _canary: CANARY,
+            type_id: TypeId::of::<T>(),
             inner,
         }
     }
 
     pub fn assert_valid(me: &Self) {
         assert!(
-            me._canary == CANARY,
-            "canary mismatch! {} is not properly initialized (expected {CANARY} but found {})",
+            me.type_id == TypeId::of::<T>(),
+            "TypeId mismatch! {} is not properly initialized!",
             core::any::type_name::<T>(),
-            me._canary
         );
     }
 
@@ -31,7 +36,10 @@ impl<T, const CANARY: u64> Canary<T, CANARY> {
     }
 }
 
-impl<T, const CANARY: u64> Deref for Canary<T, CANARY> {
+impl<T> Deref for Canary<T>
+where
+    T: 'static,
+{
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -42,7 +50,10 @@ impl<T, const CANARY: u64> Deref for Canary<T, CANARY> {
     }
 }
 
-impl<T, const CANARY: u64> DerefMut for Canary<T, CANARY> {
+impl<T> DerefMut for Canary<T>
+where
+    T: 'static,
+{
     fn deref_mut(&mut self) -> &mut Self::Target {
         #[cfg(debug_assertions)]
         Self::assert_valid(self);
@@ -53,13 +64,13 @@ impl<T, const CANARY: u64> DerefMut for Canary<T, CANARY> {
 
 #[cfg(test)]
 mod tests {
+    use core::mem::MaybeUninit;
+
     use super::*;
 
     #[test]
     fn basically_works() {
-        const CANARY: u64 = u64::from_le_bytes(*b"testmagc");
-
-        let mut canary = Canary::<_, CANARY>::new(42);
+        let mut canary = Canary::<_>::new(42u64);
         assert_eq!(*canary, 42);
         *canary += 1;
         assert_eq!(*canary, 43);
@@ -67,11 +78,21 @@ mod tests {
 
     #[test]
     #[cfg_attr(debug_assertions, should_panic)]
-    fn panics_with_incorrect_canary() {
-        const CANARY: u64 = u64::from_le_bytes(*b"testmagc");
+    fn panics_with_incorrect_type() {
+        let b = Canary::<_>::new(42f64);
 
-        let mut canary = Canary::<_, CANARY>::new(42);
-        canary._canary = 10;
-        assert_eq!(*canary, 42);
+        let b = unsafe { core::mem::transmute::<Canary<f64>, Canary<u64>>(b) };
+
+        assert_eq!(*b, 42);
+    }
+
+    #[test]
+    #[cfg_attr(debug_assertions, should_panic)]
+    #[cfg_attr(miri, ignore)]
+    fn panics_with_uninitialized() {
+        #[allow(invalid_value)]
+        let b: Canary<u64> = unsafe { MaybeUninit::uninit().assume_init() };
+
+        assert_eq!(*b, 42);
     }
 }
