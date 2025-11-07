@@ -7,6 +7,14 @@ name = "generate"
 version = "0.1.0"
 
 [[package]]
+name = "unsafe-tools"
+version = "0.1.0"
+dependencies = [
+ "unsafe-tools-canary",
+ "unsafe-tools-mimic",
+]
+
+[[package]]
 name = "unsafe-tools-canary"
 version = "0.1.0"
 
