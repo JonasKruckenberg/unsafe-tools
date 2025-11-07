@@ -1,5 +1,5 @@
 [workspace]
-members = ["canary","mimic", "mimic/generate"]
+members = ["canary", "mimic", "mimic/generate"]
 resolver = "2"
 
 [workspace.package]

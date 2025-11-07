@@ -8,7 +8,9 @@ Just wrap the type in question in `Canary` and it will automatically check for c
 ```rust
 use unsafe_tools_canary::Canary;
 
-let mut my_val = Canary::<_>::new(String::new());
+const CANARY: u64 = u64::from_le_bytes(*b"testmagc");
+
+let mut my_val = Canary::<_, CANARY>::new(String::new());
 
 assert_eq!(*my_val, "");
 
@@ -23,7 +25,9 @@ When you attempt to access an incorrectly uninitialized type, it will panic:
 use unsafe_tools_canary::Canary;
 use std::mem::MaybeUninit;
 
-let b: Canary<u64> = unsafe { MaybeUninit::uninit().assume_init() };
+const CANARY: u64 = u64::from_le_bytes(*b"testmagc");
+
+let b: Canary<u64, CANARY> = unsafe { MaybeUninit::uninit().assume_init() };
 
 // THIS WILL PANIC!
 assert_eq!(*b, 42);
