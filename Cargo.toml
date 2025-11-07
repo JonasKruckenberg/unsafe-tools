@@ -3,7 +3,7 @@ members = ["canary", "mimic", "mimic/generate"]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 authors = ["Jonas Kruckenberg <iterpre@protonmail.com>"]
 license = "MIT"
@@ -18,5 +18,5 @@ license.workspace = true
 publish = true
 
 [dependencies]
-unsafe-tools-canary = { path = "canary", version = "0.1.1" }
-unsafe-tools-mimic = { path = "mimic", version = "0.1.1" }
+unsafe-tools-canary = { path = "canary", version = "0.1.2" }
+unsafe-tools-mimic = { path = "mimic", version = "0.1.2" }
